@@ -116,7 +116,8 @@
     "memberMissingSkills": "Member is missing required skills: {{missingSkills}}",
     "noSkills": "none",
     "unknownRoles": "unknown roles",
-    "unknownSkills": "unknown skills"
+    "unknownSkills": "unknown skills",
+    "removeMember": "Remove Member"
   },
   "statistics": {
     "title": "Statistics",
@@ -177,6 +178,13 @@
     "skills": "Skills",
     "availability": "Availability",
     "teams": "Teams",
+    "targetRoles": "Target Roles",
+    "targetSkills": "Target Skills",
+    "targetSize": "Target Size",
+    "noTargetSize": "No Target Size",
+    "belowTargetSize": "Below Target Size",
+    "atTargetSize": "At Target Size",
+    "aboveTargetSize": "Above Target Size",
     "clearFilters": "Clear All",
     "applyFilters": "Apply Filters",
     "activeFilters": "Active Filters",

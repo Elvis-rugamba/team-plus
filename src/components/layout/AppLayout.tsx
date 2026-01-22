@@ -15,11 +15,9 @@ import {
   useMediaQuery,
   useTheme,
   Divider,
-  Switch,
-  FormControlLabel,
-  Select,
+  Menu,
   MenuItem,
-  type SelectChangeEvent,
+  Tooltip,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -56,6 +54,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { state, dispatch } = useAppContext();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [languageMenuAnchor, setLanguageMenuAnchor] = useState<null | HTMLElement>(null);
 
   const navItems: NavItem[] = [
     { path: '/', label: t('nav.dashboard'), icon: <DashboardIcon /> },
@@ -79,10 +78,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     dispatch({ type: 'TOGGLE_DARK_MODE' });
   };
 
-  const handleLanguageChange = (event: SelectChangeEvent) => {
-    const newLang = event.target.value as 'en' | 'de';
-    dispatch({ type: 'SET_LANGUAGE', payload: newLang });
-    i18n.changeLanguage(newLang);
+  const handleLanguageMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setLanguageMenuAnchor(event.currentTarget);
+  };
+
+  const handleLanguageMenuClose = () => {
+    setLanguageMenuAnchor(null);
+  };
+
+  const handleLanguageChange = (lang: 'en' | 'de') => {
+    dispatch({ type: 'SET_LANGUAGE', payload: lang });
+    i18n.changeLanguage(lang);
+    handleLanguageMenuClose();
+  };
+
+  // Get flag emoji for language
+  const getLanguageFlag = (lang: 'en' | 'de'): string => {
+    return lang === 'en' ? '🇬🇧' : '🇩🇪';
   };
 
   const drawer = (
@@ -107,39 +119,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </ListItem>
         ))}
       </List>
-      <Divider />
-      <Box sx={{ p: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          {t('settings.title')}
-        </Typography>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={state.darkMode}
-              onChange={handleDarkModeToggle}
-              icon={<Brightness7Icon />}
-              checkedIcon={<Brightness4Icon />}
-              inputProps={{ 'aria-label': t('accessibility.toggleDarkMode') }}
-            />
-          }
-          label={t('settings.darkMode')}
-        />
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="caption" display="block" gutterBottom>
-            {t('settings.language')}
-          </Typography>
-          <Select
-            value={state.language}
-            onChange={handleLanguageChange}
-            size="small"
-            fullWidth
-            inputProps={{ 'aria-label': t('accessibility.changeLanguage') }}
-          >
-            <MenuItem value="en">{t('settings.english')}</MenuItem>
-            <MenuItem value="de">{t('settings.german')}</MenuItem>
-          </Select>
-        </Box>
-      </Box>
     </Box>
   );
 
@@ -166,13 +145,76 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {navItems.find((item) => item.path === location.pathname)?.label || t('app.title')}
           </Typography>
-          <IconButton
-            onClick={handleDarkModeToggle}
-            color="inherit"
-            aria-label={t('accessibility.toggleDarkMode')}
-          >
-            {state.darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title={t('settings.darkMode')}>
+              <IconButton
+                onClick={handleDarkModeToggle}
+                color="inherit"
+                aria-label={t('accessibility.toggleDarkMode')}
+              >
+                {state.darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('settings.language')}>
+              <IconButton
+                onClick={handleLanguageMenuOpen}
+                color="inherit"
+                aria-label={t('accessibility.changeLanguage')}
+                aria-controls={languageMenuAnchor ? 'language-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={languageMenuAnchor ? 'true' : undefined}
+                sx={{ fontSize: '1.5rem' }}
+              >
+                {getLanguageFlag(state.language)}
+              </IconButton>
+            </Tooltip>
+            <Menu
+              id="language-menu"
+              anchorEl={languageMenuAnchor}
+              open={Boolean(languageMenuAnchor)}
+              onClose={handleLanguageMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'language-button',
+              }}
+            >
+              <MenuItem
+                onClick={() => handleLanguageChange('en')}
+                selected={state.language === 'en'}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: '1.25rem' }}>
+                    🇬🇧
+                  </Typography>
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      EN
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('settings.english')}
+                    </Typography>
+                  </Box>
+                </Box>
+              </MenuItem>
+              <MenuItem
+                onClick={() => handleLanguageChange('de')}
+                selected={state.language === 'de'}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: '1.25rem' }}>
+                    🇩🇪
+                  </Typography>
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      DE
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('settings.german')}
+                    </Typography>
+                  </Box>
+                </Box>
+              </MenuItem>
+            </Menu>
+          </Box>
         </Toolbar>
       </AppBar>
       <Box

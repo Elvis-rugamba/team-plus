@@ -202,8 +202,9 @@ export function useForm<T extends Record<string, any>>(
 
   // Validate a single field
   const validateField = useCallback(
-    <K extends keyof T>(field: K): string | undefined => {
-      const value = values[field];
+    <K extends keyof T>(field: K, fieldValue?: T[K], formValues?: T): string | undefined => {
+      const value = fieldValue !== undefined ? fieldValue : values[field];
+      const currentValues = formValues || values;
       const rules = validationRules[field];
 
       if (!rules) return undefined;
@@ -211,7 +212,7 @@ export function useForm<T extends Record<string, any>>(
       const rulesArray = Array.isArray(rules) ? rules : [rules];
 
       for (const rule of rulesArray) {
-        const error = rule(value, values);
+        const error = rule(value, currentValues);
         if (error) {
           // Translate error message if it's a translation key
           const translatedError = error.startsWith('errors.') ? t(error) : error;
@@ -242,26 +243,41 @@ export function useForm<T extends Record<string, any>>(
   // Set a single field value
   const setValue = useCallback(
     <K extends keyof T>(field: K, value: T[K]) => {
-      setValues((prev) => ({ ...prev, [field]: value }));
-      
-      // Clear error when field changes
-      if (errors[field]) {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[field];
-          return newErrors;
-        });
-      }
-
-      // Validate on change if enabled
-      if (validateOnChange) {
-        const error = validateField(field);
-        if (error) {
-          setErrors((prev) => ({ ...prev, [field]: error }));
+      setValues((prev) => {
+        const updatedValues = { ...prev, [field]: value };
+        
+        // Validate on change if enabled
+        if (validateOnChange) {
+          // Validate with the new value and updated form values
+          const error = validateField(field, value, updatedValues);
+          
+          // Update errors based on validation result
+          setErrors((prevErrors) => {
+            if (error) {
+              return { ...prevErrors, [field]: error };
+            } else {
+              // Clear error if validation passes
+              const newErrors = { ...prevErrors };
+              delete newErrors[field];
+              return newErrors;
+            }
+          });
+        } else {
+          // If not validating on change, just clear any existing error
+          setErrors((prevErrors) => {
+            if (prevErrors[field]) {
+              const newErrors = { ...prevErrors };
+              delete newErrors[field];
+              return newErrors;
+            }
+            return prevErrors;
+          });
         }
-      }
+        
+        return updatedValues;
+      });
     },
-    [errors, validateOnChange, validateField]
+    [validateOnChange, validateField]
   );
 
   // Set multiple field values

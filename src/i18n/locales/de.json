@@ -116,7 +116,8 @@
     "memberMissingSkills": "Mitglied fehlen erforderliche Fähigkeiten: {{missingSkills}}",
     "noSkills": "keine",
     "unknownRoles": "unbekannte Rollen",
-    "unknownSkills": "unbekannte Fähigkeiten"
+    "unknownSkills": "unbekannte Fähigkeiten",
+    "removeMember": "Mitglied entfernen"
   },
   "statistics": {
     "title": "Statistiken",
@@ -176,6 +177,13 @@
     "skills": "Fähigkeiten",
     "availability": "Verfügbarkeit",
     "teams": "Teams",
+    "targetRoles": "Zielrollen",
+    "targetSkills": "Zielfähigkeiten",
+    "targetSize": "Zielgröße",
+    "noTargetSize": "Keine Zielgröße",
+    "belowTargetSize": "Unter Zielgröße",
+    "atTargetSize": "Bei Zielgröße",
+    "aboveTargetSize": "Über Zielgröße",
     "clearFilters": "Alle löschen",
     "applyFilters": "Filter anwenden",
     "activeFilters": "Aktive Filter",

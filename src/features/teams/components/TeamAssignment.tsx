@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemSecondaryAction,
   Checkbox,
   Divider,
   Chip,
@@ -18,7 +19,9 @@ import {
   Alert,
   AlertTitle,
   Tooltip,
+  IconButton,
 } from '@mui/material';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
   DndContext,
   DragOverlay,
@@ -27,6 +30,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
@@ -41,6 +45,22 @@ import { useTranslation } from 'react-i18next';
 import type { Team, AppState } from '@/types';
 import type { MemberWithNames } from '@/hooks/useMembers';
 import { useAppContext } from '@/contexts/AppContext';
+
+/**
+ * Droppable Zone Component
+ * Creates a drop zone for drag and drop operations
+ */
+const DroppableZone: React.FC<{ id: string; children: React.ReactNode }> = ({ id, children }) => {
+  const { setNodeRef } = useDroppable({
+    id,
+  });
+
+  return (
+    <Box ref={setNodeRef} sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+      {children}
+    </Box>
+  );
+};
 
 interface TeamAssignmentProps {
   open: boolean;
@@ -64,22 +84,22 @@ interface DraggableMemberProps {
  */
 const calculateRelevanceScore = (member: MemberWithNames, team: Team): number => {
   let score = 0;
-  
+
   // Check role match
   if (team.targetRoles && team.targetRoles.length > 0) {
     if (team.targetRoles.includes(member.roleId)) {
       score += 10; // High weight for role match
     }
   }
-  
+
   // Check skill matches
   if (team.targetSkills && team.targetSkills.length > 0) {
-    const matchingSkills = member.skillIds.filter(skillId => 
+    const matchingSkills = member.skillIds.filter(skillId =>
       team.targetSkills!.includes(skillId)
     );
     score += matchingSkills.length * 2; // 2 points per matching skill
   }
-  
+
   return score;
 };
 
@@ -90,13 +110,13 @@ const isMemberRelevant = (member: MemberWithNames, team: Team): boolean => {
   if (!team.targetRoles && !team.targetSkills) {
     return true; // No criteria = all members are relevant
   }
-  
-  const hasMatchingRole = !team.targetRoles || team.targetRoles.length === 0 || 
+
+  const hasMatchingRole = !team.targetRoles || team.targetRoles.length === 0 ||
     team.targetRoles.includes(member.roleId);
-  
+
   const hasMatchingSkills = !team.targetSkills || team.targetSkills.length === 0 ||
     member.skillIds.some(skillId => team.targetSkills!.includes(skillId));
-  
+
   return hasMatchingRole || hasMatchingSkills;
 };
 
@@ -107,7 +127,7 @@ const hasIrrelevantMembers = (teamMembers: MemberWithNames[], team: Team): boole
   if (!team.targetRoles && !team.targetSkills) {
     return false; // No criteria = no irrelevant members
   }
-  
+
   return teamMembers.some(member => !isMemberRelevant(member, team));
 };
 
@@ -116,13 +136,13 @@ const hasIrrelevantMembers = (teamMembers: MemberWithNames[], team: Team): boole
  */
 const getSizeWarning = (currentSize: number, targetSize?: number): string | null => {
   if (!targetSize) return null;
-  
+
   if (currentSize < targetSize) {
     return 'teams.sizeBelowTarget';
   } else if (currentSize > targetSize) {
     return 'teams.sizeAboveTarget';
   }
-  
+
   return null;
 };
 
@@ -131,17 +151,17 @@ const getSizeWarning = (currentSize: number, targetSize?: number): string | null
  * Shows specific details about what's expected vs what the member has
  */
 const getIrrelevantMemberTooltip = (
-  member: MemberWithNames, 
-  team: Team, 
+  member: MemberWithNames,
+  team: Team,
   state: AppState,
   t: (key: string, options?: Record<string, unknown>) => string
 ): string => {
   if (!team.targetRoles && !team.targetSkills) {
     return '';
   }
-  
+
   const issues: string[] = [];
-  
+
   // Check role mismatch
   if (team.targetRoles && team.targetRoles.length > 0) {
     if (!team.targetRoles.includes(member.roleId)) {
@@ -149,7 +169,7 @@ const getIrrelevantMemberTooltip = (
         .map(roleId => state.roles[roleId]?.name)
         .filter(Boolean)
         .join(', ');
-      
+
       issues.push(
         t('teams.memberRoleMismatch', {
           memberRole: member.roleName,
@@ -158,24 +178,24 @@ const getIrrelevantMemberTooltip = (
       );
     }
   }
-  
+
   // Check skill mismatches
   if (team.targetSkills && team.targetSkills.length > 0) {
-    const matchingSkills = member.skillIds.filter(skillId => 
+    const matchingSkills = member.skillIds.filter(skillId =>
       team.targetSkills!.includes(skillId)
     );
-    
+
     if (matchingSkills.length === 0) {
       // Member has no matching skills
       const targetSkillNames = team.targetSkills
         .map(skillId => state.skills[skillId]?.name)
         .filter(Boolean)
         .join(', ');
-      
-      const memberSkillNames = member.skillNames.length > 0 
+
+      const memberSkillNames = member.skillNames.length > 0
         ? member.skillNames.join(', ')
         : t('teams.noSkills');
-      
+
       issues.push(
         t('teams.memberSkillsMismatch', {
           memberSkills: memberSkillNames,
@@ -189,7 +209,7 @@ const getIrrelevantMemberTooltip = (
         .map(skillId => state.skills[skillId]?.name)
         .filter(Boolean)
         .join(', ');
-      
+
       issues.push(
         t('teams.memberMissingSkills', {
           missingSkills: missingSkillNames || t('teams.unknownSkills')
@@ -197,19 +217,20 @@ const getIrrelevantMemberTooltip = (
       );
     }
   }
-  
+
   if (issues.length === 0) {
     return t('teams.memberDoesNotMatchCriteria');
   }
-  
+
   return issues.join('\n');
 };
 
 interface DraggableMemberWithTeamProps extends DraggableMemberProps {
   team: Team;
+  onRemove?: (memberId: string) => void;
 }
 
-const DraggableMember: React.FC<DraggableMemberWithTeamProps> = ({ member, isInTeam, isRelevant = true, team }) => {
+const DraggableMember: React.FC<DraggableMemberWithTeamProps> = ({ member, isInTeam, isRelevant = true, team, onRemove }) => {
   const { t } = useTranslation();
   const { state } = useAppContext();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -259,18 +280,18 @@ const DraggableMember: React.FC<DraggableMemberWithTeamProps> = ({ member, isInT
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography variant="body2">{member.name}</Typography>
             {!isRelevant && (
-              <Tooltip 
+              <Tooltip
                 title={
                   <Typography variant="body2" component="div" sx={{ whiteSpace: 'pre-line' }}>
                     {tooltipText}
                   </Typography>
-                } 
+                }
                 arrow
                 placement="top"
               >
-                <Chip 
-                  label="⚠️" 
-                  size="small" 
+                <Chip
+                  label="⚠️"
+                  size="small"
                   sx={{ height: 16, fontSize: '0.7rem', p: 0, cursor: 'help' }}
                 />
               </Tooltip>
@@ -281,7 +302,7 @@ const DraggableMember: React.FC<DraggableMemberWithTeamProps> = ({ member, isInT
         primaryTypographyProps={{ variant: 'body2' }}
         secondaryTypographyProps={{ variant: 'caption' }}
       />
-      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center' }}>
         {member.skillNames.slice(0, 2).map((skill) => (
           <Chip key={skill} label={skill} size="small" variant="outlined" />
         ))}
@@ -291,6 +312,25 @@ const DraggableMember: React.FC<DraggableMemberWithTeamProps> = ({ member, isInT
           </Tooltip>
         )}
       </Box>
+      {isInTeam && onRemove && (
+        <ListItemSecondaryAction>
+          <Tooltip title={t('teams.removeMember')} arrow>
+            <IconButton
+              edge="end"
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(member.id);
+              }}
+              color="error"
+              aria-label={`${t('teams.removeMember')} - ${member.name}`}
+              sx={{ ml: 1 }}
+            >
+              <RemoveCircleOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 };
@@ -355,19 +395,39 @@ export const TeamAssignment: React.FC<TeamAssignmentProps> = ({
     const memberId = active.id as string;
     const isInTeam = team.memberIds.includes(memberId);
 
-    // If dropped on available members area and currently in team, remove
-    if (!isInTeam && over.id === 'available-members') {
+    // Check if dropped on a drop zone or on another member
+    const overId = over.id as string;
+    const isDroppedOnAvailableZone = overId === 'available-members';
+    const isDroppedOnTeamZone = overId === 'team-members';
+
+    // If dropped on another member, check which list that member belongs to
+    let targetZone: 'available' | 'team' | null = null;
+    if (isDroppedOnAvailableZone) {
+      targetZone = 'available';
+    } else if (isDroppedOnTeamZone) {
+      targetZone = 'team';
+    } else {
+      // Check if dropped on a member in available list
+      const droppedOnAvailableMember = availableMembers.find(m => m.id === overId);
+      const droppedOnTeamMember = teamMembers.find(m => m.id === overId);
+
+      if (droppedOnAvailableMember) {
+        targetZone = 'available';
+      } else if (droppedOnTeamMember) {
+        targetZone = 'team';
+      }
+    }
+
+    // If member is in team and dropped on available zone, remove
+    if (isInTeam && targetZone === 'available') {
+      onRemove(memberId);
       return;
     }
 
-    // If dropped on team area and not in team, add
-    if (!isInTeam && over.id === 'team-members') {
+    // If member is not in team and dropped on team zone, add
+    if (!isInTeam && targetZone === 'team') {
       onAssign([memberId]);
-    }
-
-    // If already in team and dropped elsewhere, remove
-    if (isInTeam && over.id === 'available-members') {
-      onRemove(memberId);
+      return;
     }
   };
 
@@ -393,11 +453,20 @@ export const TeamAssignment: React.FC<TeamAssignmentProps> = ({
   const activeMember = [...teamMembers, ...availableMembers].find((m) => m.id === activeId);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth aria-labelledby="team-assignment-dialog">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      aria-labelledby="team-assignment-dialog"
+      PaperProps={{
+        sx: { height: '90vh', maxHeight: 900 }
+      }}
+    >
       <DialogTitle id="team-assignment-dialog">
         {t('teams.assignMembers')} - {team.name}
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', minHeight: 0, flex: 1 }}>
         {/* Warning Banner */}
         {(hasIrrelevant || sizeWarning) && (
           <Alert severity="warning" sx={{ mb: 2 }}>
@@ -430,90 +499,103 @@ export const TeamAssignment: React.FC<TeamAssignmentProps> = ({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <Box sx={{ display: 'flex', gap: 2, minHeight: 400 }}>
-            {/* Available Members */}
-            <Paper sx={{ flex: 1, p: 2 }} id="available-members">
-              <Typography variant="h6" gutterBottom>
-                {t('teams.unassignedMembers')} ({sortedAvailableMembers.length})
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-              <SortableContext
-                items={sortedAvailableMembers.map((m) => m.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <List dense sx={{ maxHeight: 350, overflow: 'auto' }}>
-                  {sortedAvailableMembers.map((member) => {
-                    const isRelevant = isMemberRelevant(member, team);
-                    return (
-                      <Box key={member.id} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Checkbox
-                          checked={selectedMembers.has(member.id)}
-                          onChange={() => handleToggleSelect(member.id)}
-                          size="small"
-                          inputProps={{ 'aria-label': `Select ${member.name}` }}
-                        />
-                        <Box sx={{ flex: 1 }}>
-                          <DraggableMember member={member} isInTeam={false} isRelevant={isRelevant} team={team} />
-                        </Box>
-                      </Box>
-                    );
-                  })}
-                  {sortedAvailableMembers.length === 0 && (
-                    <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
-                      {t('common.noData')}
-                    </Typography>
-                  )}
-                </List>
-              </SortableContext>
-              {selectedMembers.size > 0 && (
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleAssignSelected}
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  aria-label={`${t('teams.assignMembers')} ${selectedMembers.size} members`}
+          <Box sx={{ display: 'flex', gap: 2, minHeight: 500, height: '100%' }}>
+            {/* Available Members Drop Zone */}
+            <DroppableZone id="available-members">
+              <Paper sx={{ flex: 1, p: 2, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                <Typography variant="h6" gutterBottom>
+                  {t('teams.unassignedMembers')} ({sortedAvailableMembers.length})
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                <SortableContext
+                  items={sortedAvailableMembers.map((m) => m.id)}
+                  strategy={verticalListSortingStrategy}
                 >
-                  {t('teams.assignMembers')} ({selectedMembers.size})
-                </Button>
-              )}
-            </Paper>
+                  <List dense sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+                    {sortedAvailableMembers.map((member) => {
+                      const isRelevant = isMemberRelevant(member, team);
+                      return (
+                        <Box key={member.id} sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Checkbox
+                            checked={selectedMembers.has(member.id)}
+                            onChange={() => handleToggleSelect(member.id)}
+                            size="small"
+                            inputProps={{ 'aria-label': `Select ${member.name}` }}
+                          />
+                          <Box sx={{ flex: 1 }}>
+                            <DraggableMember member={member} isInTeam={false} isRelevant={isRelevant} team={team} />
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                    {sortedAvailableMembers.length === 0 && (
+                      <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
+                        {t('common.noData')}
+                      </Typography>
+                    )}
+                  </List>
+                </SortableContext>
+                {selectedMembers.size > 0 && (
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handleAssignSelected}
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    aria-label={`${t('teams.assignMembers')} ${selectedMembers.size} members`}
+                  >
+                    {t('teams.assignMembers')} ({selectedMembers.size})
+                  </Button>
+                )}
+              </Paper>
+            </DroppableZone>
 
-            {/* Team Members */}
-            <Paper
-              sx={{
-                flex: 1,
-                p: 2,
-                bgcolor: 'action.hover',
-                border: 2,
-                borderColor: team.color || 'primary.main',
-              }}
-              id="team-members"
-            >
-              <Typography variant="h6" gutterBottom>
-                {t('teams.members')} ({sortedTeamMembers.length}
-                {team.targetSize ? ` / ${team.targetSize} ${t('teams.target')}` : ''})
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-              <SortableContext
-                items={sortedTeamMembers.map((m) => m.id)}
-                strategy={verticalListSortingStrategy}
+            {/* Team Members Drop Zone */}
+            <DroppableZone id="team-members">
+              <Paper
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  bgcolor: 'action.hover',
+                  border: 2,
+                  borderColor: team.color || 'primary.main',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: 0,
+                }}
               >
-                <List dense sx={{ maxHeight: 350, overflow: 'auto' }}>
-                  {sortedTeamMembers.map((member) => {
-                    const isRelevant = isMemberRelevant(member, team);
-                    return (
-                      <DraggableMember key={member.id} member={member} isInTeam={true} isRelevant={isRelevant} team={team} />
-                    );
-                  })}
-                  {sortedTeamMembers.length === 0 && (
-                    <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
-                      {t('teams.noMembersInTeam')}
-                    </Typography>
-                  )}
-                </List>
-              </SortableContext>
-            </Paper>
+                <Typography variant="h6" gutterBottom>
+                  {t('teams.members')} ({sortedTeamMembers.length}
+                  {team.targetSize ? ` / ${team.targetSize} ${t('teams.target')}` : ''})
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                <SortableContext
+                  items={sortedTeamMembers.map((m) => m.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <List dense sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+                    {sortedTeamMembers.map((member) => {
+                      const isRelevant = isMemberRelevant(member, team);
+                      return (
+                        <DraggableMember
+                          key={member.id}
+                          member={member}
+                          isInTeam={true}
+                          isRelevant={isRelevant}
+                          team={team}
+                          onRemove={onRemove}
+                        />
+                      );
+                    })}
+                    {sortedTeamMembers.length === 0 && (
+                      <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
+                        {t('teams.noMembersInTeam')}
+                      </Typography>
+                    )}
+                  </List>
+                </SortableContext>
+              </Paper>
+            </DroppableZone>
           </Box>
 
           <DragOverlay>
