@@ -173,7 +173,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({ open, team, onClose, onSave 
               label="Color"
               type="color"
               fullWidth
-              inputProps={{ 'aria-label': 'Team color' }}
+              inputProps={{ 'aria-label': t('teams.color') }}
             />
           </Box>
 

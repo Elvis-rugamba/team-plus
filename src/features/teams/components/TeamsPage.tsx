@@ -243,7 +243,7 @@ export const TeamsPage: React.FC = () => {
       {(listingView.searchTerm || hasActiveFilters) && (
         <Paper sx={{ p: 2, mb: 2 }}>
           <Typography variant="body2" color="text.secondary">
-            Showing {filteredItems.length} of {teams.length} teams
+            {t('common.showingResults', { current: filteredItems.length, total: teams.length, type: t('teams.title').toLowerCase() })}
           </Typography>
         </Paper>
       )}

@@ -218,7 +218,7 @@ export const MembersPage: React.FC = () => {
       {(listingView.searchTerm || hasActiveFilters) && (
         <Paper sx={{ p: 2, mb: 2 }}>
           <Typography variant="body2" color="text.secondary">
-            Showing {filteredItems.length} of {membersWithNames.length} members
+            {t('common.showingResults', { current: filteredItems.length, total: membersWithNames.length, type: t('members.title').toLowerCase() })}
           </Typography>
         </Paper>
       )}

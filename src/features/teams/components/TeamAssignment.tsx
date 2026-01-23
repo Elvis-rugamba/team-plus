@@ -520,7 +520,7 @@ export const TeamAssignment: React.FC<TeamAssignmentProps> = ({
                             checked={selectedMembers.has(member.id)}
                             onChange={() => handleToggleSelect(member.id)}
                             size="small"
-                            inputProps={{ 'aria-label': `Select ${member.name}` }}
+                            inputProps={{ 'aria-label': t('teams.selectMember', { name: member.name }) }}
                           />
                           <Box sx={{ flex: 1 }}>
                             <DraggableMember member={member} isInTeam={false} isRelevant={isRelevant} team={team} />
@@ -542,7 +542,7 @@ export const TeamAssignment: React.FC<TeamAssignmentProps> = ({
                     onClick={handleAssignSelected}
                     fullWidth
                     sx={{ mt: 2 }}
-                    aria-label={`${t('teams.assignMembers')} ${selectedMembers.size} members`}
+                    aria-label={t('teams.assignSelectedMembers', { count: selectedMembers.size })}
                   >
                     {t('teams.assignMembers')} ({selectedMembers.size})
                   </Button>

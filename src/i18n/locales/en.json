@@ -38,7 +38,9 @@
     "rowsPerPage": "Rows per page",
     "add": "Add",
     "addNew": "Add New Item",
-    "addNewConfirm": "This item doesn't exist yet. Would you like to add it?"
+    "addNewConfirm": "This item doesn't exist yet. Would you like to add it?",
+    "unknown": "Unknown",
+    "showingResults": "Showing {{current}} of {{total}} {{type}}"
   },
   "members": {
     "title": "Members",
@@ -117,7 +119,10 @@
     "noSkills": "none",
     "unknownRoles": "unknown roles",
     "unknownSkills": "unknown skills",
-    "removeMember": "Remove Member"
+    "removeMember": "Remove Member",
+    "selectMember": "Select {{name}}",
+    "assignSelectedMembers": "Assign {{count}} selected members",
+    "color": "Team color"
   },
   "statistics": {
     "title": "Statistics",
@@ -161,7 +166,14 @@
     "targetRoles": "Target Roles",
     "assignedRoles": "Assigned Roles",
     "targetSkills": "Target Skills",
-    "assignedSkills": "Assigned Skills"
+    "assignedSkills": "Assigned Skills",
+    "description": "Overview of teams, members, skills, and availability"
+  },
+  "dashboard": {
+    "recentMembers": "Recent Members",
+    "recentTeams": "Recent Teams",
+    "viewAllMembers": "View All Members",
+    "viewAllTeams": "View All Teams"
   },
   "export": {
     "title": "Export Data",
@@ -208,6 +220,14 @@
     "minLength": "This field is too short",
     "maxLength": "This field is too long",
     "invalidFormat": "Invalid format"
+  },
+  "errorBoundary": {
+    "title": "Oops! Something went wrong",
+    "description": "We're sorry for the inconvenience. The application encountered an unexpected error.",
+    "tryAgain": "Try Again",
+    "tryAgainAria": "Try again",
+    "reloadPage": "Reload Page",
+    "reloadPageAria": "Reload page"
   },
   "accessibility": {
     "openMenu": "Open menu",

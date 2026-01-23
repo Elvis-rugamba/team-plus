@@ -150,7 +150,7 @@ export const DashboardPage: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Recent Members
+              {t('dashboard.recentMembers')}
             </Typography>
             {recentMembers.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
@@ -177,7 +177,7 @@ export const DashboardPage: React.FC = () => {
               </Box>
             )}
             <Button size="small" sx={{ mt: 2 }} href="/members">
-              View All Members
+              {t('dashboard.viewAllMembers')}
             </Button>
           </Paper>
         </Grid>
@@ -185,7 +185,7 @@ export const DashboardPage: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Recent Teams
+              {t('dashboard.recentTeams')}
             </Typography>
             {recentTeams.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
@@ -215,7 +215,7 @@ export const DashboardPage: React.FC = () => {
               </Box>
             )}
             <Button size="small" sx={{ mt: 2 }} href="/teams">
-              View All Teams
+              {t('dashboard.viewAllTeams')}
             </Button>
           </Paper>
         </Grid>

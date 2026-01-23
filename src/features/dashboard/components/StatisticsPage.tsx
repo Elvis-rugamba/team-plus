@@ -146,7 +146,7 @@ export const StatisticsPage: React.FC = () => {
     teamsArray.forEach((team) => {
       if (team.targetRoles) {
         team.targetRoles.forEach((roleId: string) => {
-          const roleName = roles[roleId]?.name || 'Unknown';
+          const roleName = roles[roleId]?.name || t('common.unknown');
           targetRolesCount[roleName] = (targetRolesCount[roleName] || 0) + 1;
         });
       }
@@ -155,7 +155,7 @@ export const StatisticsPage: React.FC = () => {
     // Calculate assigned roles (how many members have each role)
     const assignedRolesCount: Record<string, number> = {};
     membersArray.forEach((member) => {
-      const roleName = roles[member.roleId]?.name || 'Unknown';
+      const roleName = roles[member.roleId]?.name || t('common.unknown');
       assignedRolesCount[roleName] = (assignedRolesCount[roleName] || 0) + 1;
     });
 
@@ -164,7 +164,7 @@ export const StatisticsPage: React.FC = () => {
     teamsArray.forEach((team) => {
       if (team.targetSkills) {
         team.targetSkills.forEach((skillId: string) => {
-          const skillName = skills[skillId]?.name || 'Unknown';
+          const skillName = skills[skillId]?.name || t('common.unknown');
           targetSkillsCount[skillName] = (targetSkillsCount[skillName] || 0) + 1;
         });
       }
@@ -174,7 +174,7 @@ export const StatisticsPage: React.FC = () => {
     const assignedSkillsCount: Record<string, number> = {};
     membersArray.forEach((member) => {
       member.skillIds.forEach((skillId) => {
-        const skillName = skills[skillId]?.name || 'Unknown';
+        const skillName = skills[skillId]?.name || t('common.unknown');
         assignedSkillsCount[skillName] = (assignedSkillsCount[skillName] || 0) + 1;
       });
     });
@@ -225,7 +225,7 @@ export const StatisticsPage: React.FC = () => {
           {t('statistics.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Overview of teams, members, skills, and availability
+          {t('statistics.description')}
         </Typography>
       </Paper>
 
@@ -517,7 +517,7 @@ export const StatisticsPage: React.FC = () => {
                     series={[
                       {
                         data: roleData.map(([, count]) => count),
-                        label: 'Members',
+                        label: t('statistics.members'),
                         color: '#9c27b0',
                       },
                     ]}

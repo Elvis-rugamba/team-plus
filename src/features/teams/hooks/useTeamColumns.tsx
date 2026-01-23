@@ -165,7 +165,7 @@ export function useTeamColumns(
       },
       {
         id: 'teamMembers',
-        label: 'Team Members',
+        label: t('teams.members'),
         sortable: false,
         filterable: false,
         minWidth: 200,

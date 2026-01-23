@@ -38,7 +38,9 @@
     "rowsPerPage": "Zeilen pro Seite",
     "add": "Hinzufügen",
     "addNew": "Neues Element hinzufügen",
-    "addNewConfirm": "Dieses Element existiert noch nicht. Möchten Sie es hinzufügen?"
+    "addNewConfirm": "Dieses Element existiert noch nicht. Möchten Sie es hinzufügen?",
+    "unknown": "Unbekannt",
+    "showingResults": "Zeige {{current}} von {{total}} {{type}}"
   },
   "members": {
     "title": "Mitglieder",
@@ -117,7 +119,10 @@
     "noSkills": "keine",
     "unknownRoles": "unbekannte Rollen",
     "unknownSkills": "unbekannte Fähigkeiten",
-    "removeMember": "Mitglied entfernen"
+    "removeMember": "Mitglied entfernen",
+    "selectMember": "{{name}} auswählen",
+    "assignSelectedMembers": "{{count}} ausgewählte Mitglieder zuweisen",
+    "color": "Team-Farbe"
   },
   "statistics": {
     "title": "Statistiken",
@@ -160,7 +165,14 @@
     "targetRoles": "Zielrollen",
     "assignedRoles": "Zugewiesene Rollen",
     "targetSkills": "Zielfähigkeiten",
-    "assignedSkills": "Zugewiesene Fähigkeiten"
+    "assignedSkills": "Zugewiesene Fähigkeiten",
+    "description": "Übersicht über Teams, Mitglieder, Fähigkeiten und Verfügbarkeit"
+  },
+  "dashboard": {
+    "recentMembers": "Kürzliche Mitglieder",
+    "recentTeams": "Kürzliche Teams",
+    "viewAllMembers": "Alle Mitglieder anzeigen",
+    "viewAllTeams": "Alle Teams anzeigen"
   },
   "export": {
     "title": "Daten exportieren",
@@ -207,6 +219,18 @@
     "minLength": "Dieses Feld ist zu kurz",
     "maxLength": "Dieses Feld ist zu lang",
     "invalidFormat": "Ungültiges Format"
+  },
+  "errorBoundary": {
+    "title": "Ups! Etwas ist schief gelaufen",
+    "description": "Wir entschuldigen uns für die Unannehmlichkeiten. Die Anwendung ist auf einen unerwarteten Fehler gestoßen.",
+    "tryAgain": "Erneut versuchen",
+    "tryAgainAria": "Erneut versuchen",
+    "reloadPage": "Seite neu laden",
+    "reloadPageAria": "Seite neu laden"
+  },
+  "dashboard": {
+    "recentMembers": "Kürzliche Mitglieder",
+    "recentTeams": "Kürzliche Teams"
   },
   "accessibility": {
     "openMenu": "Menü öffnen",
