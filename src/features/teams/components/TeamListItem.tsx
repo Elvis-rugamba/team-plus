@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ListItem,
   ListItemText,
@@ -45,22 +45,31 @@ export const TeamListItem: React.FC<TeamListItemProps> = ({
   const { getRoleName } = useRoles();
   const { getSkillName } = useSkills();
 
-  // Resolve target roles and skills to names
-  const targetRoleNames = team.targetRoles
-    ?.map(id => getRoleName(id))
-    .filter(Boolean) || [];
-  
-  const targetSkillNames = team.targetSkills
-    ?.map(id => getSkillName(id))
-    .filter(Boolean) || [];
-  
-  const hasTargetCriteria = targetRoleNames.length > 0 || targetSkillNames.length > 0 || team.targetSize;
+  // Resolve target roles and skills to names (memoized for performance)
+  const targetRoleNames = useMemo(() => {
+    return team.targetRoles
+      ?.map(id => getRoleName(id))
+      .filter(Boolean) || [];
+  }, [team.targetRoles, getRoleName]);
+
+  const targetSkillNames = useMemo(() => {
+    return team.targetSkills
+      ?.map(id => getSkillName(id))
+      .filter(Boolean) || [];
+  }, [team.targetSkills, getSkillName]);
+
+  const hasTargetCriteria = useMemo(() => {
+    return targetRoleNames.length > 0 || targetSkillNames.length > 0 || team.targetSize;
+  }, [targetRoleNames.length, targetSkillNames.length, team.targetSize]);
 
   return (
     <ListItem
-      button={onClick ? true : false}
-      onClick={() => onClick?.(team)}
-      sx={{ borderLeft: 4, borderColor: team.color || 'primary.main' }}
+      onClick={onClick ? () => onClick(team) : undefined}
+      sx={{
+        borderLeft: 4,
+        borderColor: team.color || 'primary.main',
+        ...(onClick && { cursor: 'pointer' })
+      }}
     >
       <ListItemText
         primary={

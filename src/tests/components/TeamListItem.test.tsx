@@ -135,9 +135,9 @@ describe('TeamListItem', () => {
       />
     );
 
+    // Roles and skills are displayed as comma-separated strings
     expect(screen.getByText('Developer')).toBeInTheDocument();
-    expect(screen.getByText('JavaScript')).toBeInTheDocument();
-    expect(screen.getByText('React')).toBeInTheDocument();
+    expect(screen.getByText(/JavaScript.*React/)).toBeInTheDocument();
   });
 
   it('should call onEdit when edit button is clicked', () => {
@@ -185,9 +185,14 @@ describe('TeamListItem', () => {
       />
     );
 
-    const listItem = screen.getByText('Development Team').closest('li');
+    // The ListItem is a button, so we can click it directly
+    const listItem = screen.getByText('Development Team').closest('[role="button"]');
     if (listItem) {
       fireEvent.click(listItem);
+      expect(mockOnClick).toHaveBeenCalledWith(mockTeam);
+    } else {
+      // Fallback: try clicking the team name
+      fireEvent.click(screen.getByText('Development Team'));
       expect(mockOnClick).toHaveBeenCalledWith(mockTeam);
     }
   });

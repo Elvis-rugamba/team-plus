@@ -52,7 +52,7 @@ A modern, feature-rich team management application built with React 18, TypeScri
 - **Accessibility (A11y)**: WCAG compliant with proper ARIA labels and keyboard navigation
 - **Type Safety**: Strict TypeScript mode for maximum type safety
 - **Custom Hooks**: Reusable business logic with custom React hooks
-- **Testing**: Comprehensive unit and E2E test coverage
+- **Testing**: Comprehensive unit test coverage
 
 ## 🚀 Quick Start
 
@@ -86,8 +86,6 @@ npm run preview       # Preview production build locally
 # Testing
 npm test              # Run unit tests with coverage
 npm run test:watch    # Run tests in watch mode
-npm run test:e2e      # Run E2E tests with Playwright
-npm run test:e2e:ui   # Run E2E tests with Playwright UI
 
 # Code Quality
 npm run lint          # Run ESLint
@@ -311,32 +309,23 @@ npm test
 - `src/tests/contexts/` - State management tests
 - `src/tests/components/` - Component tests
 
-### E2E Tests
+### Unit Tests
 
-Run end-to-end tests with Playwright:
+Run unit tests with Vitest:
 
 ```bash
-# Run all E2E tests
-npm run test:e2e
+# Run all unit tests with coverage
+npm test
 
-# Run with UI mode for debugging
-npm run test:e2e:ui
+# Run tests in watch mode
+npm run test:watch
 ```
 
-**E2E test suites:**
+**Test structure:**
 
-- `e2e/app.spec.ts` - Navigation, theme, and language switching
-- `e2e/members.spec.ts` - Member CRUD operations
-- `e2e/teams.spec.ts` - Team CRUD and assignment operations
-- `e2e/export.spec.ts` - Data export functionality
-
-**Browsers tested:**
-
-- Chromium (Desktop)
-- Firefox (Desktop)
-- WebKit/Safari (Desktop)
-- Mobile Chrome (Pixel 5)
-- Mobile Safari (iPhone 12)
+- `src/tests/components/` - Component tests
+- `src/tests/contexts/` - State management tests
+- `src/tests/utils/` - Utility function tests
 
 ## ♿ Accessibility
 
@@ -413,7 +402,6 @@ The optimized build will be created in the `dist/` directory with:
 
 - **Vite** - Build tool and dev server
 - **Vitest** - Unit testing framework
-- **Playwright** - E2E testing
 - **ESLint** - Code linting
 
 ## 🔧 Configuration Files
@@ -421,7 +409,6 @@ The optimized build will be created in the `dist/` directory with:
 - `vite.config.ts` - Vite build configuration
 - `tsconfig.json` - TypeScript configuration (strict mode)
 - `vitest.config.ts` - Unit test configuration
-- `playwright.config.ts` - E2E test configuration
 - `.eslintrc.cjs` - ESLint rules
 
 ## 🐛 Troubleshooting

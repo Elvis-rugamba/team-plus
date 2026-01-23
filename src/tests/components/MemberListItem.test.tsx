@@ -60,9 +60,8 @@ describe('MemberListItem', () => {
       />
     );
 
-    expect(screen.getByText('JavaScript')).toBeInTheDocument();
-    expect(screen.getByText('React')).toBeInTheDocument();
-    expect(screen.getByText('TypeScript')).toBeInTheDocument();
+    // Skills are displayed as a comma-separated string
+    expect(screen.getByText(/JavaScript.*React.*TypeScript/)).toBeInTheDocument();
   });
 
   it('should display team count', () => {

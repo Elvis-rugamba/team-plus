@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -46,16 +46,22 @@ export const TeamCard: React.FC<TeamCardProps> = ({
   const { getRoleName } = useRoles();
   const { getSkillName } = useSkills();
 
-  // Resolve target roles and skills to names
-  const targetRoleNames = team.targetRoles
-    ?.map(id => getRoleName(id))
-    .filter(Boolean) || [];
-  
-  const targetSkillNames = team.targetSkills
-    ?.map(id => getSkillName(id))
-    .filter(Boolean) || [];
-  
-  const hasTargetCriteria = targetRoleNames.length > 0 || targetSkillNames.length > 0 || team.targetSize;
+  // Resolve target roles and skills to names (memoized for performance)
+  const targetRoleNames = useMemo(() => {
+    return team.targetRoles
+      ?.map(id => getRoleName(id))
+      .filter(Boolean) || [];
+  }, [team.targetRoles, getRoleName]);
+
+  const targetSkillNames = useMemo(() => {
+    return team.targetSkills
+      ?.map(id => getSkillName(id))
+      .filter(Boolean) || [];
+  }, [team.targetSkills, getSkillName]);
+
+  const hasTargetCriteria = useMemo(() => {
+    return targetRoleNames.length > 0 || targetSkillNames.length > 0 || team.targetSize;
+  }, [targetRoleNames.length, targetSkillNames.length, team.targetSize]);
 
   return (
     <Card

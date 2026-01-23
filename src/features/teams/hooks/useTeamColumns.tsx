@@ -68,21 +68,21 @@ export function useTeamColumns(
         render: (team) => {
           const currentSize = team.memberIds.length;
           const targetSize = team.targetSize;
-          const sizeColor = targetSize 
-            ? currentSize === targetSize 
-              ? 'success' 
-              : currentSize < targetSize 
-                ? 'warning' 
+          const sizeColor = targetSize
+            ? currentSize === targetSize
+              ? 'success'
+              : currentSize < targetSize
+                ? 'warning'
                 : 'error'
             : 'primary';
-          
+
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Chip
                 icon={<GroupIcon />}
                 label={targetSize ? `${currentSize} / ${targetSize}` : currentSize}
                 size="small"
-                color={sizeColor as any}
+                color={sizeColor}
                 variant="outlined"
               />
             </Box>
@@ -100,11 +100,11 @@ export function useTeamColumns(
           const targetRoleNames = team.targetRoles
             ?.map(id => getRoleName(id))
             .filter(Boolean) || [];
-          
+
           if (targetRoleNames.length === 0) {
             return <Typography variant="caption" color="text.secondary">-</Typography>;
           }
-          
+
           return (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {targetRoleNames.slice(0, 2).map((role) => (
@@ -137,11 +137,11 @@ export function useTeamColumns(
           const targetSkillNames = team.targetSkills
             ?.map(id => getSkillName(id))
             .filter(Boolean) || [];
-          
+
           if (targetSkillNames.length === 0) {
             return <Typography variant="caption" color="text.secondary">-</Typography>;
           }
-          
+
           return (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {targetSkillNames.slice(0, 3).map((skill) => (

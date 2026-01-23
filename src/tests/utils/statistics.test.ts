@@ -7,6 +7,8 @@ describe('calculateStatistics', () => {
     const state: AppState = {
       members: {},
       teams: {},
+      roles: {},
+      skills: {},
       darkMode: false,
       language: 'en',
     };
@@ -25,8 +27,8 @@ describe('calculateStatistics', () => {
         '1': {
           id: '1',
           name: 'John Doe',
-          role: 'Developer',
-          skills: ['JavaScript', 'React'],
+          roleId: 'role-1',
+          skillIds: ['skill-1', 'skill-2'],
           availability: Availability.AVAILABLE,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
@@ -34,8 +36,8 @@ describe('calculateStatistics', () => {
         '2': {
           id: '2',
           name: 'Jane Smith',
-          role: 'Designer',
-          skills: ['UI/UX', 'Figma'],
+          roleId: 'role-2',
+          skillIds: ['skill-3', 'skill-4'],
           availability: Availability.BUSY,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
@@ -50,6 +52,16 @@ describe('calculateStatistics', () => {
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
         },
+      },
+      roles: {
+        'role-1': { id: 'role-1', name: 'Developer', createdAt: '2024-01-01' },
+        'role-2': { id: 'role-2', name: 'Designer', createdAt: '2024-01-01' },
+      },
+      skills: {
+        'skill-1': { id: 'skill-1', name: 'JavaScript', createdAt: '2024-01-01' },
+        'skill-2': { id: 'skill-2', name: 'React', createdAt: '2024-01-01' },
+        'skill-3': { id: 'skill-3', name: 'UI/UX', createdAt: '2024-01-01' },
+        'skill-4': { id: 'skill-4', name: 'Figma', createdAt: '2024-01-01' },
       },
       darkMode: false,
       language: 'en',
@@ -68,8 +80,8 @@ describe('calculateStatistics', () => {
         '1': {
           id: '1',
           name: 'John Doe',
-          role: 'Developer',
-          skills: ['JavaScript', 'React'],
+          roleId: 'role-1',
+          skillIds: ['skill-1', 'skill-2'],
           availability: Availability.AVAILABLE,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
@@ -77,14 +89,22 @@ describe('calculateStatistics', () => {
         '2': {
           id: '2',
           name: 'Jane Smith',
-          role: 'Developer',
-          skills: ['JavaScript', 'Vue'],
+          roleId: 'role-1',
+          skillIds: ['skill-1', 'skill-3'],
           availability: Availability.AVAILABLE,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
         },
       },
       teams: {},
+      roles: {
+        'role-1': { id: 'role-1', name: 'Developer', createdAt: '2024-01-01' },
+      },
+      skills: {
+        'skill-1': { id: 'skill-1', name: 'JavaScript', createdAt: '2024-01-01' },
+        'skill-2': { id: 'skill-2', name: 'React', createdAt: '2024-01-01' },
+        'skill-3': { id: 'skill-3', name: 'Vue', createdAt: '2024-01-01' },
+      },
       darkMode: false,
       language: 'en',
     };
@@ -102,8 +122,8 @@ describe('calculateStatistics', () => {
         '1': {
           id: '1',
           name: 'John',
-          role: 'Developer',
-          skills: [],
+          roleId: 'role-1',
+          skillIds: [],
           availability: Availability.AVAILABLE,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
@@ -111,8 +131,8 @@ describe('calculateStatistics', () => {
         '2': {
           id: '2',
           name: 'Jane',
-          role: 'Designer',
-          skills: [],
+          roleId: 'role-2',
+          skillIds: [],
           availability: Availability.AVAILABLE,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
@@ -120,14 +140,20 @@ describe('calculateStatistics', () => {
         '3': {
           id: '3',
           name: 'Bob',
-          role: 'Manager',
-          skills: [],
+          roleId: 'role-3',
+          skillIds: [],
           availability: Availability.BUSY,
           createdAt: '2024-01-01',
           updatedAt: '2024-01-01',
         },
       },
       teams: {},
+      roles: {
+        'role-1': { id: 'role-1', name: 'Developer', createdAt: '2024-01-01' },
+        'role-2': { id: 'role-2', name: 'Designer', createdAt: '2024-01-01' },
+        'role-3': { id: 'role-3', name: 'Manager', createdAt: '2024-01-01' },
+      },
+      skills: {},
       darkMode: false,
       language: 'en',
     };
